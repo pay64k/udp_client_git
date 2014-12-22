@@ -41,7 +41,8 @@ public class QuoteClient {
                 
             case WFR1:
                 packet = new DatagramPacket(buf, buf.length);
-                socket.receive(packet);                
+                socket.setSoTimeout(200);//-----------
+                socket.receive(packet);
                 String received = new String(packet.getData(), 0, packet.getLength());
                 System.out.println("Recieved: " + received);
                 
@@ -68,6 +69,7 @@ public class QuoteClient {
             case IDLE:
                 break;
         }
+        //System.out.println(timer.getTimerModulo(10));
     }
 //        DatagramSocket socket = new DatagramSocket();
 //     

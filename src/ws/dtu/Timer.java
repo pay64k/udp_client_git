@@ -40,6 +40,10 @@ public class Timer extends Thread
         {
             return m_elapsed;
         }
+        
+        public int getTimerModulo(int modulo){
+            return m_elapsed%modulo;
+        }
                 
 	
 	/** Resets the timer back to zero */
