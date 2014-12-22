@@ -69,7 +69,7 @@ public class Timer extends Thread
 			{
 				// Increment time remaining
 				m_elapsed += m_rate;
-
+                                //System.out.println(m_elapsed);
 				// Check to see if the time has been exceeded
 				if (m_elapsed > m_length)
 				{

@@ -12,8 +12,8 @@ public class QuoteClient {
         //setup timer timeout in milliseconds:
         Timer timer = new Timer(5000);
         //start timer:
-        //timer.start();
-        
+        timer.start();
+                        
         
         // send request
         String test="TEST11";
@@ -45,10 +45,6 @@ public class QuoteClient {
         }
         
         socket.close();
-        int time=0;
-        while (true) {            
-            time++;
-            System.out.println(time/1000);
-        }
+
     }
 }
