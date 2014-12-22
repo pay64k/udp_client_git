@@ -5,6 +5,13 @@ import java.net.*;
 import java.util.*;
 
 public class QuoteClient {
+    
+    //States---------------------------
+     private enum State{IDLE, WFR1, WFR2, REC_STREAM};
+        State currentState;
+        State nextState=State.IDLE;
+    //---------------------------------
+        
     public static void main(String[] args) throws IOException {
 
 
@@ -13,10 +20,15 @@ public class QuoteClient {
         Timer timer = new Timer(5000);
         //start timer:
         timer.start();
-                        
+        byte[] buf = new byte[256];
+        
+        while(true){
+                    
+            currentState=nextState;
+            
         
         // send request
-        String test="TEST11";
+        String test="REQUEST:";
         byte[] buf_transmit = new byte[256];
         byte[] buf_recieve = new byte[256];
         buf_transmit=test.getBytes();
@@ -47,4 +59,5 @@ public class QuoteClient {
         socket.close();
 
     }
+   }
 }
