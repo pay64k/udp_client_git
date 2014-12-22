@@ -80,13 +80,18 @@ public class QuoteClient {
                 break;
                 
             case REC_STREAM:
-                for (int i = 0; i < pkt_amount; i++) {
+                
                     buf = new byte[256];
                     recv_packet = new DatagramPacket(buf, buf.length);
                     try {
                         socket.receive(recv_packet);
+                        timer.reset();
                     } catch (Exception e) {
-                        System.out.println("No_pkts!");
+                    data="is_all_sent?";
+                    buf=data.getBytes();
+                    send_packet = new DatagramPacket(buf, buf.length, address, 4445);
+                    System.out.println("Sending: " + new String(send_packet.getData(), 0, send_packet.getLength() ));
+                    socket.send(send_packet);
                     }  
                     
                 received = new String(recv_packet.getData(), 0, recv_packet.getLength());
@@ -110,14 +115,23 @@ public class QuoteClient {
                                 recv_dataList.add(received.substring(distance+2,received.length()));
                                 break;
                             }
+                          }
+                    }
+                    else if (received.equals("sent_all")) {
+                        //end if got all pkts
+                        if (recv_seqList.size()==pkt_amount) {
+                            System.out.println("Got_all_pkts!");
+                            nextState=State.IDLE;
+                        }
+                        //sort pkts and eventually resend missing pkts numbers
+                        else{
                             
+                            nextState=State.WFR2;
                         }
                     }
-
+                break;
                 
-                }
-
-                
+            case WFR2:
                 break;
                 
             case IDLE:
