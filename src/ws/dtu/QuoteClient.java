@@ -30,6 +30,8 @@ public class QuoteClient {
         int pkt_timeout = 300;
         Map<Integer,String> map = new TreeMap<Integer, String>();
         
+        ArrayList missing_pkt_num=new ArrayList();
+        
     while(true){
         currentState=nextState;
         
@@ -140,7 +142,7 @@ public class QuoteClient {
                                     System.out.println("Got index: "+ i);
                                 }
                                 else{
-                                    System.out.println("Putting: "+i);
+                                    System.out.println("Missing: "+i);
                                     map.put(i, null);
                                 }
                             }
@@ -148,53 +150,64 @@ public class QuoteClient {
                             for(Map.Entry<Integer,String> entry : map.entrySet()) {
                               System.out.println(entry.getKey() + " => " + entry.getValue());
  
+                              //missing packets:
                                 if (entry.getValue()==null) {
-                                    
+                                    missing_pkt_num.add(entry.getKey());
                                 }
                               
                             }
+                            //send missing_pkt_numbers:
+                            for (int i = 0; i < missing_pkt_num.size(); i++) {
+                                data=missing_pkt_num.get(i).toString();
+                                buf=data.getBytes();
+                                send_packet = new DatagramPacket(buf, buf.length, address, 4445);
+                                System.out.println("Sending missing: " + new String(send_packet.getData(), 0, send_packet.getLength() ));
+                                socket.send(send_packet);
+                            }
+                                data="END";
+                                buf=data.getBytes();
+                                send_packet = new DatagramPacket(buf, buf.length, address, 4445);
+                                System.out.println("Sending missing: " + new String(send_packet.getData(), 0, send_packet.getLength() ));
+                                socket.send(send_packet);
+                                
                             nextState=State.WFR2;
                         }
                     }
                 break;
                 
             case WFR2:
+                    buf = new byte[256];
+                    recv_packet = new DatagramPacket(buf, buf.length);
+                    try {
+                        socket.receive(recv_packet);
+                        timer.reset();
+                    } catch (Exception e) {
+                        //resend missing_pkts_numbers according to CLIENT FSM v3.2
+                        for (int i = 0; i < missing_pkt_num.size(); i++) {
+                        data=missing_pkt_num.get(i).toString();
+                        buf=data.getBytes();
+                        send_packet = new DatagramPacket(buf, buf.length, address, 4445);
+                        System.out.println("Sending missing: " + new String(send_packet.getData(), 0, send_packet.getLength() ));
+                        socket.send(send_packet);
+                        }
+                        data="END";
+                        buf=data.getBytes();
+                        send_packet = new DatagramPacket(buf, buf.length, address, 4445);
+                        System.out.println("Sending missing: " + new String(send_packet.getData(), 0, send_packet.getLength() ));
+                        socket.send(send_packet);
+                    }
+                    received = new String(recv_packet.getData(), 0, recv_packet.getLength());
+                    System.out.println("Recieved: " + received);
+                    if(received.equals("ACK")){
+                        nextState=State.IDLE;
+                    }
                 break;
                 
             case IDLE:
                 break;
         }
-        //System.out.println(timer.getTimerModulo(10));
+       
     }
-//        DatagramSocket socket = new DatagramSocket();
-//     
-//
-//                
-//        
-//        // send request
-//        String test="REQUEST:";
-//        byte[] buf_transmit = new byte[256];
-//        byte[] buf_recieve = new byte[256];
-//        buf_transmit=test.getBytes();
-//       
-//        
-//        InetAddress address = InetAddress.getByName("127.0.0.1");
-//        DatagramPacket packet = new DatagramPacket(buf_transmit, buf_transmit.length, address, 4445);
-//       
-//        socket.send(packet);
-//        System.out.println("Sending: " + new String(packet.getData(), 0, packet.getLength() ));
-//        
-//            // get response
-//        packet = new DatagramPacket(buf_recieve, buf_recieve.length);
-//        socket.receive(packet);
-//       
-//	    // display response
-//        String received = new String(packet.getData(), 0, packet.getLength());
-//        System.out.println("Recieved: " + received);
-//        
-//        
-//        socket.close();
-
-    }
+   }
         
 }
