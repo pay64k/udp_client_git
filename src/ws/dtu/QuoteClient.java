@@ -28,6 +28,7 @@ public class QuoteClient {
         ArrayList recv_dataList=new ArrayList();
         Integer recvd_counter=0;
         int pkt_timeout = 300;
+        Map<Integer,String> map = new TreeMap<Integer, String>();
         
     while(true){
         currentState=nextState;
@@ -113,19 +114,45 @@ public class QuoteClient {
                                 //System.out.println(received.substring(distance+2,received.length()));
                                 recv_seqList.add(received.substring(1, distance+1));
                                 recv_dataList.add(received.substring(distance+2,received.length()));
+                                //using map:
+                                Integer seq = Integer.valueOf(received.substring(1, distance+1));
+                                String dataString = received.substring(distance+2,received.length());
+                                map.put(seq, dataString);
                                 break;
                             }
                           }
                     }
                     else if (received.equals("sent_all")) {
                         //end if got all pkts
-                        if (recv_seqList.size()==pkt_amount) {
+                        if (map.size()==pkt_amount) {
                             System.out.println("Got_all_pkts!");
+                                data="got_all_pkts";
+                                buf=data.getBytes();
+                                send_packet = new DatagramPacket(buf, buf.length, address, 4445);
+                                System.out.println("Sending: " + new String(send_packet.getData(), 0, send_packet.getLength() ));
+                                socket.send(send_packet);
                             nextState=State.IDLE;
                         }
-                        //sort pkts and eventually resend missing pkts numbers
                         else{
-                            
+                            //fill in "null" for packet numbers that are missing
+                            for (int i = 0; i < pkt_amount; i++) {
+                                if (map.containsKey(i)) {
+                                    System.out.println("Got index: "+ i);
+                                }
+                                else{
+                                    System.out.println("Putting: "+i);
+                                    map.put(i, null);
+                                }
+                            }
+                            //find missing pkts:
+                            for(Map.Entry<Integer,String> entry : map.entrySet()) {
+                              System.out.println(entry.getKey() + " => " + entry.getValue());
+ 
+                                if (entry.getValue()==null) {
+                                    
+                                }
+                              
+                            }
                             nextState=State.WFR2;
                         }
                     }
