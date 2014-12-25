@@ -20,7 +20,7 @@ public class QuoteClient {
         DatagramSocket socket = new DatagramSocket();
         byte[] buf = new byte[256];
         String data=null;
-        InetAddress address = InetAddress.getByName("192.168.1.50");////enter ip here
+        InetAddress address = InetAddress.getByName("127.0.0.1");////enter ip here 192.168.1.50
         DatagramPacket send_packet;
         DatagramPacket recv_packet;
         int pkt_amount=0;
@@ -143,7 +143,7 @@ public class QuoteClient {
                                     map.put(seq, dataString);
                                     recvd_counter++; 
                                     System.out.println("Received packets++: "+ recvd_counter);
-                                    System.out.println("Map size: "+map.size());
+                                    //System.out.println("Map size: "+map.size());
                                     break;
                                         }else{
                                         System.out.println("Allready got packet nr: " + seq);
