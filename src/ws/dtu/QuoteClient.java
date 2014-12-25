@@ -20,14 +20,14 @@ public class QuoteClient {
         DatagramSocket socket = new DatagramSocket();
         byte[] buf = new byte[256];
         String data=null;
-        InetAddress address = InetAddress.getByName("127.0.0.1");////enter ip here 192.168.1.50
+        InetAddress address = InetAddress.getByName("192.168.1.50");////enter ip here 192.168.1.50  127.0.0.1 
         DatagramPacket send_packet;
         DatagramPacket recv_packet;
         int pkt_amount=0;
         ArrayList recv_seqList=new ArrayList();
         ArrayList recv_dataList=new ArrayList();
         Integer recvd_counter=0;
-        int pkt_timeout = 500;
+        int pkt_timeout = 1;
         Map<Integer,String> map = new TreeMap<Integer, String>();
         
         ArrayList missing_pkt_num=new ArrayList();
@@ -81,7 +81,7 @@ public class QuoteClient {
                     nextState=State.REC_STREAM; 
                     for (int i = 0; i < pkt_amount; i++) {
                                 if (map.containsKey(i)) {
-                                    System.out.println("Got index: "+ i);
+                                    //System.out.println("Got index: "+ i);
                                 }
                                 else{
                                     System.out.println("Missing: "+i);
@@ -176,7 +176,7 @@ public class QuoteClient {
                             //fill in "null" for packet numbers that are missing
                             for (int i = 0; i < pkt_amount; i++) {
                                 if (map.containsKey(i)) {
-                                    System.out.println("Got index: "+ i);
+                                    //System.out.println("Got index: "+ i);
                                 }
                                 else{
                                     System.out.println("Missing: "+i);
@@ -185,7 +185,7 @@ public class QuoteClient {
                             }
                             //find missing pkts:
                             for(Map.Entry<Integer,String> entry : map.entrySet()) {
-                              System.out.println(entry.getKey() + " => " + entry.getValue());
+                              //System.out.println(entry.getKey() + " => " + entry.getValue());
  
                               //missing packets:
                                 if (entry.getValue()==null) {
