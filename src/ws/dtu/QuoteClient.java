@@ -36,7 +36,7 @@ public class QuoteClient extends Thread{
         DatagramSocket socket = new DatagramSocket();
         byte[] buf = new byte[256];
         String data=null;
-        InetAddress address = InetAddress.getByName("192.168.1.50");////enter ip here 192.168.1.50  127.0.0.1 
+        InetAddress address = InetAddress.getByName("127.0.0.1");////enter ip here 192.168.1.50  127.0.0.1 
         DatagramPacket send_packet;
         DatagramPacket recv_packet;
         int pkt_amount=0;

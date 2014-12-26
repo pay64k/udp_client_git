@@ -107,6 +107,7 @@ class MyPanel extends JPanel implements Runnable{
     }
     public static void set_size(int pkt_amount){
         _pkt_amount=pkt_amount;
+        System.out.println("Packet Amount: " + pkt_amount);
     }
   
     
