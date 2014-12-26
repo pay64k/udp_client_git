@@ -10,9 +10,9 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 
-class MyPanel extends JPanel{
+class MyPanel extends JPanel implements Runnable{
 
-    public static int blax=10;
+    public static int blax=0;
     public static int blay=0;
     
     
@@ -31,7 +31,7 @@ class MyPanel extends JPanel{
     public void paintComponent(Graphics g) {
         super.paintComponent(g);       
 
-        // Draw 
+//        // Draw 
 //        for(int y = 0; y < 100; y+=8) {
 //            for(int x = 0; x < 100; x+=8) {
 //                g.setColor(Color.red);               
@@ -78,8 +78,9 @@ class MyPanel extends JPanel{
     }
     
     public void move(){
-        blax+=10;
-        blay+=10;
+     
+        blax+=1;
+        blay+=1;
     }
     
 //    public static void main(String[] args) throws InterruptedException {
@@ -90,5 +91,21 @@ class MyPanel extends JPanel{
 //                
 //        }
 //    }
-  
+
+    @Override
+    public void run() {
+                  
+        while (true) {            
+            
+        
+        move();
+        repaint();
+        try {  
+            Thread.sleep(50);  
+        } catch (Exception ex) {}
+        }
+    
+        
+    }
+
 }

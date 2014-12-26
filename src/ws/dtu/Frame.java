@@ -163,7 +163,7 @@ public class Frame extends javax.swing.JFrame {
         // TODO add your handling code here:
         
         new QuoteClient().start();
-        
+        new Thread((Runnable) jPanel1).start();
         //new MyPanel().start();
         QuoteClient.nextState=QuoteClient.State.START;
         
