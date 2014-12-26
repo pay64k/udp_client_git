@@ -54,6 +54,7 @@ public class Frame extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("UDP Client");
+        setResizable(false);
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosed(java.awt.event.WindowEvent evt) {
                 formWindowClosed(evt);
@@ -61,7 +62,6 @@ public class Frame extends javax.swing.JFrame {
         });
 
         jButton1.setText("Start");
-        jButton1.setActionCommand("Start");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
@@ -102,8 +102,6 @@ public class Frame extends javax.swing.JFrame {
                 jLabel2MouseEntered(evt);
             }
         });
-
-        jPanel1.setAutoscrolls(true);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);

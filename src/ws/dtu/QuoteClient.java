@@ -96,6 +96,8 @@ public class QuoteClient extends Thread{
                     pkt_amount=Integer.parseInt(received.substring(11));
                     System.out.println("Amount of packets(int): " + pkt_amount);
                     
+                    MyPanel.set_size(pkt_amount);//set size of painted rectangles
+                    
                     data="ACK";
                     buf=data.getBytes();
                     send_packet = new DatagramPacket(buf, buf.length, address, 4445);
@@ -166,9 +168,8 @@ public class QuoteClient extends Thread{
                                         if(entry.getValue() == null){
                                     map.put(seq, dataString);
                                                                        
-                                    
-                                    //TODO update frame:
-                                           
+                                    MyPanel.updatePackets(map);
+                                    // MyPanel.move();
                                     recvd_counter++; 
                                     System.out.println("Received packets++: "+ recvd_counter);
                                     //System.out.println("Map size: "+map.size());
