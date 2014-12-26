@@ -10,6 +10,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.util.Map;
+import java.util.TreeMap;
 
 class MyPanel extends JPanel implements Runnable{
 
@@ -22,7 +23,7 @@ class MyPanel extends JPanel implements Runnable{
     
     public static int _pkt_amount;
     
-    
+    public static Map<Integer,String> packetMap = new TreeMap<Integer, String>();
     
     
     public MyPanel() {
@@ -40,15 +41,22 @@ class MyPanel extends JPanel implements Runnable{
 
         // Draw 
         
-            y_size = (int)Math.ceil((double)_pkt_amount/60.0);
+            y_size = (int)Math.ceil((double)_pkt_amount/90.0);
             
         //System.out.println("-----------------------------------------------"+y_size);
         for(int y = 0; y < y_size*8; y+=8) {
-            for(int x = 0; x < 60*8; x+=8) {
-                System.out.println("y/8= " + y/8.0 + " x/8= " + x/8.0 + "---------------------------");
-                if (y/8.0 * x/8.0 < _pkt_amount) {
-                    g.setColor(Color.red);               
-                    g.fillRect(x, y, 5, 5);  
+            for(int x = 0; x < 90*8; x+=8) {
+                //System.out.println("y/8= " + y/8.0 + " x/8= " + x/8.0 + "---------------------------");
+                if (90*(y/8) + x/8.0 < _pkt_amount) {
+                    if (packetMap.get(90*(y/8) + x/8)==null) {
+                        g.setColor(Color.red);               
+                        g.fillRect(x, y, 5, 5);  
+                    }
+                    else{
+                        g.setColor(new Color(0,204,0));               
+                        g.fillRect(x, y, 5, 5);
+                    }
+                      
                 }
                
                               
@@ -85,10 +93,10 @@ class MyPanel extends JPanel implements Runnable{
     
     public static void updatePackets(Map<Integer,String> map){
         paint=true;
-        
-        for(Map.Entry<Integer,String> entry : map.entrySet()) {
-            
-        }
+        packetMap=map;
+//        for(Map.Entry<Integer,String> entry : map.entrySet()) {
+//            
+//        }
        
     }
     

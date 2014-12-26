@@ -36,7 +36,7 @@ public class QuoteClient extends Thread{
         DatagramSocket socket = new DatagramSocket();
         byte[] buf = new byte[256];
         String data=null;
-        InetAddress address = InetAddress.getByName("127.0.0.1");////enter ip here 192.168.1.50  127.0.0.1 
+        InetAddress address = InetAddress.getByName("192.168.1.50");////enter ip here 192.168.1.50  127.0.0.1 
         DatagramPacket send_packet;
         DatagramPacket recv_packet;
         int pkt_amount=0;
@@ -57,11 +57,11 @@ public class QuoteClient extends Thread{
             
             case START:
                 recvd_counter=0;
-                System.out.println("In state START");
+                //System.out.println("In state START");
                 data="REQUEST:";
                 buf=data.getBytes();
                 send_packet = new DatagramPacket(buf, buf.length, address, 4445);
-                System.out.println("Sending: " + new String(send_packet.getData(), 0, send_packet.getLength() ));
+                //System.out.println("Sending: " + new String(send_packet.getData(), 0, send_packet.getLength() ));
                 socket.send(send_packet);
                 //timer.reset();
                 nextState=State.WFR1;
@@ -75,7 +75,7 @@ public class QuoteClient extends Thread{
                 break;
                 
             case WFR1:
-                System.out.println("In state WFR1");
+                //System.out.println("In state WFR1");
                 buf = new byte[256];
                 recv_packet = new DatagramPacket(buf, buf.length);
                 socket.setSoTimeout(pkt_timeout);//----------- timeout for a packet which is not arriving
@@ -85,23 +85,23 @@ public class QuoteClient extends Thread{
                     data="REQUEST:";
                     buf=data.getBytes();
                     send_packet = new DatagramPacket(buf, buf.length, address, 4445);
-                    System.out.println("Sending: " + new String(send_packet.getData(), 0, send_packet.getLength() ));
+                    //System.out.println("Sending: " + new String(send_packet.getData(), 0, send_packet.getLength() ));
                     socket.send(send_packet);
                 }
                 
                 String received = new String(recv_packet.getData(), 0, recv_packet.getLength());
-                System.out.println("Recieved: " + received);
+                //System.out.println("Recieved: " + received);
                 
                 if (received.startsWith("pkt_amount:")) {
                     pkt_amount=Integer.parseInt(received.substring(11));
-                    System.out.println("Amount of packets(int): " + pkt_amount);
+                    //System.out.println("Amount of packets(int): " + pkt_amount);
                     
                     MyPanel.set_size(pkt_amount);//set size of painted rectangles
                     
                     data="ACK";
                     buf=data.getBytes();
                     send_packet = new DatagramPacket(buf, buf.length, address, 4445);
-                    System.out.println("Sending: " + new String(send_packet.getData(), 0, send_packet.getLength() ));
+                    //System.out.println("Sending: " + new String(send_packet.getData(), 0, send_packet.getLength() ));
                     socket.send(send_packet);
                     
                     nextState=State.REC_STREAM; 
@@ -110,7 +110,7 @@ public class QuoteClient extends Thread{
                                     //System.out.println("Got index: "+ i);
                                 }
                                 else{
-                                    System.out.println("Missing: "+i);
+                                    //System.out.println("Missing: "+i);
                                     map.put(i, null);
                                 }
                             }
@@ -121,7 +121,7 @@ public class QuoteClient extends Thread{
                 break;
                 
             case REC_STREAM:
-                System.out.println("In state REC_STREAM");
+                //System.out.println("In state REC_STREAM");
                 missing_pkt_num.clear();
                 
                     buf = new byte[256];
@@ -133,12 +133,12 @@ public class QuoteClient extends Thread{
                     data="is_all_sent?";
                     buf=data.getBytes();
                     send_packet = new DatagramPacket(buf, buf.length, address, 4445);
-                    System.out.println("Sending: " + new String(send_packet.getData(), 0, send_packet.getLength() ));
+                    //System.out.println("Sending: " + new String(send_packet.getData(), 0, send_packet.getLength() ));
                     socket.send(send_packet);
                     }  
                     
                 received = new String(recv_packet.getData(), 0, recv_packet.getLength());
-                System.out.println("Recieved: " + received);
+               // System.out.println("Recieved: " + received);
                     
                     if (received.startsWith("|")) {
 //                        recvd_counter++;                   
@@ -158,9 +158,9 @@ public class QuoteClient extends Thread{
                                 recv_dataList.add(received.substring(distance+2,received.length()));
                                 //using map:
                                 Integer seq = Integer.valueOf(received.substring(1, distance+1));
-                                System.out.println("Seq: " + seq);
+                                //System.out.println("Seq: " + seq);
                                 String dataString = received.substring(distance+2,received.length());
-                                System.out.println("dataString: " + dataString);
+                                //System.out.println("dataString: " + dataString);
                                 
                                 for(Map.Entry<Integer,String> entry : map.entrySet()) {
                                     if(entry.getKey().equals(seq)){
@@ -171,11 +171,11 @@ public class QuoteClient extends Thread{
                                     MyPanel.updatePackets(map);
                                     // MyPanel.move();
                                     recvd_counter++; 
-                                    System.out.println("Received packets++: "+ recvd_counter);
+                                    //System.out.println("Received packets++: "+ recvd_counter);
                                     //System.out.println("Map size: "+map.size());
                                     break;
                                         }else{
-                                        System.out.println("Allready got packet nr: " + seq);
+                                        //System.out.println("Allready got packet nr: " + seq);
                                     
                                     break;
                                 } 
@@ -193,12 +193,12 @@ public class QuoteClient extends Thread{
                                 data="got_all_pkts";
                                 buf=data.getBytes();
                                 send_packet = new DatagramPacket(buf, buf.length, address, 4445);
-                                System.out.println("Sending: " + new String(send_packet.getData(), 0, send_packet.getLength() ));
+                                //System.out.println("Sending: " + new String(send_packet.getData(), 0, send_packet.getLength() ));
                                 socket.send(send_packet);
-                                System.out.println("Recieved text:");
-                                for(Map.Entry<Integer,String> entry : map.entrySet()) {
-                              System.out.println(entry.getKey() + " => " + entry.getValue());
-                                } 
+                                //System.out.println("Recieved text:");
+//                                for(Map.Entry<Integer,String> entry : map.entrySet()) {
+//                              System.out.println(entry.getKey() + " => " + entry.getValue());
+//                                } 
                                 
                             try (PrintWriter writer = new PrintWriter("C:/testJava/result.txt", "UTF-8")) {
                                 for(Map.Entry<Integer,String> entry : map.entrySet()) {
@@ -217,7 +217,7 @@ public class QuoteClient extends Thread{
                                     //System.out.println("Got index: "+ i);
                                 }
                                 else{
-                                    System.out.println("Missing: "+i);
+                                    //System.out.println("Missing: "+i);
                                     map.put(i, null);
                                 }
                             }
@@ -236,13 +236,13 @@ public class QuoteClient extends Thread{
                                 data=missing_pkt_num.get(i).toString();
                                 buf=data.getBytes();
                                 send_packet = new DatagramPacket(buf, buf.length, address, 4445);
-                                System.out.println("Sending missing: " + new String(send_packet.getData(), 0, send_packet.getLength() ));
+                                //System.out.println("Sending missing: " + new String(send_packet.getData(), 0, send_packet.getLength() ));
                                 socket.send(send_packet);
                             }
                                 data="END";
                                 buf=data.getBytes();
                                 send_packet = new DatagramPacket(buf, buf.length, address, 4445);
-                                System.out.println("Sending missing: " + new String(send_packet.getData(), 0, send_packet.getLength() ));
+                                //System.out.println("Sending missing: " + new String(send_packet.getData(), 0, send_packet.getLength() ));
                                 socket.send(send_packet);
                                 
                             nextState=State.WFR2;
@@ -251,7 +251,7 @@ public class QuoteClient extends Thread{
                 break;
                 
             case WFR2:
-                System.out.println("In State WFR2");
+                //System.out.println("In State WFR2");
                     buf = new byte[256];
                     recv_packet = new DatagramPacket(buf, buf.length);
                     try {
@@ -263,17 +263,17 @@ public class QuoteClient extends Thread{
                         data=missing_pkt_num.get(i).toString();
                         buf=data.getBytes();
                         send_packet = new DatagramPacket(buf, buf.length, address, 4445);
-                        System.out.println("Sending missing: " + new String(send_packet.getData(), 0, send_packet.getLength() ));
+                        //System.out.println("Sending missing: " + new String(send_packet.getData(), 0, send_packet.getLength() ));
                         socket.send(send_packet);
                         }
                         data="END";
                         buf=data.getBytes();
                         send_packet = new DatagramPacket(buf, buf.length, address, 4445);
-                        System.out.println("Sending missing: " + new String(send_packet.getData(), 0, send_packet.getLength() ));
+                        //System.out.println("Sending missing: " + new String(send_packet.getData(), 0, send_packet.getLength() ));
                         socket.send(send_packet);
                     }
                     received = new String(recv_packet.getData(), 0, recv_packet.getLength());
-                    System.out.println("Recieved: " + received);
+                    //System.out.println("Recieved: " + received);
                     if(received.equals("ACK")){
                         nextState=State.REC_STREAM;
                     }
