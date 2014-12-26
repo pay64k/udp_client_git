@@ -88,7 +88,9 @@ public class Timer extends Thread
 	// Override this to provide custom functionality
 	public void timeout()
 	{
-		System.err.println ("Timeout");
+		System.out.println ("Timeout");
 		System.exit(1);
+                
+                //Runtime.getRuntime().halt(0);
 	}
 }

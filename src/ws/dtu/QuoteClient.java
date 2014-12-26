@@ -3,16 +3,28 @@ package ws.dtu;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.omg.CORBA.portable.IDLEntity;
 
-public class QuoteClient {
+public class QuoteClient extends Thread{
     //States---------------------------
     private enum State{IDLE,START, WFR1, WFR2, REC_STREAM};
         static State currentState;
         static State nextState=State.START;
     //---------------------------------
-             static Timer timer = new Timer(10000);   
-    public static void main(String[] args) throws IOException {
+             static Timer timer = new Timer(10000); 
+             
+             
+             public void run(){
+        try {
+            main2(null);
+        } catch (IOException ex) {
+            Logger.getLogger(QuoteClient.class.getName()).log(Level.SEVERE, null, ex);
+        }
+             }
+             
+    public static void main2(String[] args) throws IOException {
         
 
         //start timer:
@@ -34,6 +46,8 @@ public class QuoteClient {
         
     while(true){
         currentState=nextState;
+        
+        
         
         switch(currentState){
             
@@ -141,6 +155,9 @@ public class QuoteClient {
                                         
                                         if(entry.getValue() == null){
                                     map.put(seq, dataString);
+                                    
+                                    //TODO update frame:
+                                           
                                     recvd_counter++; 
                                     System.out.println("Received packets++: "+ recvd_counter);
                                     //System.out.println("Map size: "+map.size());
@@ -260,5 +277,5 @@ public class QuoteClient {
        
     }
    }
-        
+
 }
