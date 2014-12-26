@@ -1,5 +1,6 @@
 package ws.dtu;
 
+import java.awt.Graphics;
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -9,16 +10,19 @@ import org.omg.CORBA.portable.IDLEntity;
 
 public class QuoteClient extends Thread{
     //States---------------------------
-    private enum State{IDLE,START, WFR1, WFR2, REC_STREAM};
-        static State currentState;
-        static State nextState=State.START;
+    public static enum State{IDLE,START, WFR1, WFR2, REC_STREAM};
+        public static State currentState;
+        public static State nextState=State.START;
     //---------------------------------
              static Timer timer = new Timer(10000); 
              
              
+    @Override
              public void run(){
         try {
+            
             main2(null);
+            
         } catch (IOException ex) {
             Logger.getLogger(QuoteClient.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -62,6 +66,12 @@ public class QuoteClient extends Thread{
                 //timer.reset();
                 nextState=State.WFR1;
                 buf = new byte[256];
+                
+        
+                
+    
+
+                
                 break;
                 
             case WFR1:
@@ -155,6 +165,7 @@ public class QuoteClient extends Thread{
                                         
                                         if(entry.getValue() == null){
                                     map.put(seq, dataString);
+                                                                       
                                     
                                     //TODO update frame:
                                            
@@ -272,6 +283,7 @@ public class QuoteClient extends Thread{
                 
             case IDLE:
                 //System.out.println("In state IDLE");
+                timer.reset();
                 break;
         }
        

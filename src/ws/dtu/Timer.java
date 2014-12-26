@@ -88,9 +88,8 @@ public class Timer extends Thread
 	// Override this to provide custom functionality
 	public void timeout()
 	{
-		System.out.println ("Timeout");
-		System.exit(1);
-                
-                //Runtime.getRuntime().halt(0);
+		System.out.println ("----------Timeout----------");
+		//System.exit(1);
+                QuoteClient.nextState=QuoteClient.State.IDLE;               //Runtime.getRuntime().halt(0);
 	}
 }
