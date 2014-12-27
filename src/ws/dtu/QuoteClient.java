@@ -36,7 +36,7 @@ public class QuoteClient extends Thread{
         DatagramSocket socket = new DatagramSocket();
         byte[] buf = new byte[256];
         String data=null;
-        InetAddress address = InetAddress.getByName("127.0.0.1");////enter ip here 192.168.1.50  127.0.0.1 
+        InetAddress address = InetAddress.getByName("192.168.1.50");////enter ip here 192.168.1.50  127.0.0.1 
         DatagramPacket send_packet;
         DatagramPacket recv_packet;
         int pkt_amount=0;
@@ -61,7 +61,7 @@ public class QuoteClient extends Thread{
                 data="REQUEST:";
                 buf=data.getBytes();
                 send_packet = new DatagramPacket(buf, buf.length, address, 4445);
-                //System.out.println("Sending: " + new String(send_packet.getData(), 0, send_packet.getLength() ));
+                System.out.println("Sending: " + new String(send_packet.getData(), 0, send_packet.getLength() ));
                 socket.send(send_packet);
                 //timer.reset();
                 nextState=State.WFR1;
@@ -193,12 +193,15 @@ public class QuoteClient extends Thread{
                                 data="got_all_pkts";
                                 buf=data.getBytes();
                                 send_packet = new DatagramPacket(buf, buf.length, address, 4445);
-                                //System.out.println("Sending: " + new String(send_packet.getData(), 0, send_packet.getLength() ));
+                                System.out.println("Sending: " + new String(send_packet.getData(), 0, send_packet.getLength() ));
                                 socket.send(send_packet);
                                 //System.out.println("Recieved text:");
 //                                for(Map.Entry<Integer,String> entry : map.entrySet()) {
 //                              System.out.println(entry.getKey() + " => " + entry.getValue());
 //                                } 
+                                Frame.elapsed_time=System.currentTimeMillis();
+                                long exec_time = Frame.elapsed_time - Frame.time;
+                                System.out.println("Execution time: " + exec_time + " ms");
                                 
                             try (PrintWriter writer = new PrintWriter("C:/testJava/result.txt", "UTF-8")) {
                                 for(Map.Entry<Integer,String> entry : map.entrySet()) {
@@ -206,6 +209,7 @@ public class QuoteClient extends Thread{
                                     writer.print(entry.getValue());
                                 } 
                                 System.out.println("Written to file (C:/testJava/result.txt)...");
+                                
                             }
                                 
                             nextState=State.IDLE;
@@ -284,6 +288,7 @@ public class QuoteClient extends Thread{
                 
             case IDLE:
                 //System.out.println("In state IDLE");
+                
                 timer.reset();
                 break;
         }

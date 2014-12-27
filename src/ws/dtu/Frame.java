@@ -21,6 +21,9 @@ import java.net.URL;
  */
 public class Frame extends javax.swing.JFrame {
 
+    public static long time=0,elapsed_time=0;
+    
+    
     /**
      * Creates new form Frame
      */
@@ -164,6 +167,7 @@ public class Frame extends javax.swing.JFrame {
         //new MyPanel().start();
         QuoteClient.nextState=QuoteClient.State.START;
         System.out.println("Transferring...");
+        time=System.currentTimeMillis();
         
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -177,8 +181,8 @@ public class Frame extends javax.swing.JFrame {
         // TODO add your handling code here:
         //System.exit(1);
         QuoteClient.nextState=QuoteClient.State.IDLE;
-        
-        
+        time=0;
+                
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
