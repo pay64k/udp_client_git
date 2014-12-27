@@ -250,8 +250,8 @@ public class Frame extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new Frame().setVisible(true);
-                JTextAreaOutputStream out = new JTextAreaOutputStream (jTextArea2);
-                System.setOut (new PrintStream (out));
+//                JTextAreaOutputStream out = new JTextAreaOutputStream (jTextArea2);
+//                System.setOut (new PrintStream (out));
             }
         });
         

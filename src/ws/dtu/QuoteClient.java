@@ -16,9 +16,9 @@ public class QuoteClient extends Thread{
     //---------------------------------
              static Timer timer = new Timer(10000); 
              
-             public static int packet_size=1024; //change for packet size only here!!
+             public static int packet_size=256; 
              
-             
+             public static int message_size = 1024; //change for packet size only here!!------------------!!             
     @Override
              public void run(){
         try {
@@ -98,6 +98,8 @@ public class QuoteClient extends Thread{
                     pkt_amount=Integer.parseInt(received.substring(11));
                     //System.out.println("Amount of packets(int): " + pkt_amount);
                     
+                    packet_size =  (int)(Math.log10(pkt_amount)+1)+message_size+2;
+                    
                     MyPanel.set_size(pkt_amount);//set size of painted rectangles
                     
                     data="ACK";
@@ -143,50 +145,46 @@ public class QuoteClient extends Thread{
                // System.out.println("Recieved: " + received);
                     
                     if (received.startsWith("|")) {
-//                        recvd_counter++;                   
-                        char[] array = received.toCharArray();
-                        int distance=0;
-                        //count distance between two '|' characters to find the length of the packet number
-                        //first one is always '|'
-                        for (int j = 1; j < array.length; j++) {
-                            if (array[j] != '|') {
-                                distance++;
-                            }
-                            else{
-                                //System.out.println(distance);
-                                //System.out.println(received.substring(1, distance+1));
-                                //System.out.println(received.substring(distance+2,received.length()));
-                                recv_seqList.add(received.substring(1, distance+1));
-                                recv_dataList.add(received.substring(distance+2,received.length()));
-                                //using map:
-                                Integer seq = Integer.valueOf(received.substring(1, distance+1));
-                                //System.out.println("Seq: " + seq);
-                                String dataString = received.substring(distance+2,received.length());
-                                //System.out.println("dataString: " + dataString);
-                                
-                                for(Map.Entry<Integer,String> entry : map.entrySet()) {
-                                    if(entry.getKey().equals(seq)){
-                                        
-                                        if(entry.getValue() == null){
+                   
+                        int first = received.indexOf("|");
+                        int second = received.indexOf("|", first+1);
+                        System.out.println(first + " " + second);
+                        Integer seq = Integer.valueOf(received.substring(first+1, second));
+                        System.out.println(seq);
+                        String dataString = received.substring(second+1,received.length());
+                        
+                        System.out.println("REC.length: " + received.length());
+                        System.out.println("LENGTH: " + dataString.length());
+                                     
+                        
+                                if (map.get(seq)==null) {
                                     map.put(seq, dataString);
-                                                                       
                                     MyPanel.updatePackets(map);
-                                    // MyPanel.move();
                                     recvd_counter++; 
-                                    //System.out.println("Received packets++: "+ recvd_counter);
-                                    //System.out.println("Map size: "+map.size());
-                                    break;
-                                        }else{
-                                        //System.out.println("Allready got packet nr: " + seq);
-                                    
-                                    break;
-                                } 
-                                }
-                                      
-                                }
-                                
-                            }
-                          }
+                                    }
+                        
+//                        char[] array = received.toCharArray();
+//                        int distance=0;
+//                        //count distance between two '|' characters to find the length of the packet number
+//                        //first one is always '|'
+//                        for (int j = 1; j < array.length; j++) {
+//                            if (array[j] != '|') {
+//                                distance++;
+//                            }
+//                            else{ 
+//                                                               
+//                                Integer seq = Integer.valueOf(received.substring(1, distance+1));
+//                                String dataString = received.substring(distance+2,received.length());
+//                                                                
+//                                if (map.get(seq)==null) {
+//                                    map.put(seq, dataString);
+//                                    MyPanel.updatePackets(map);
+//                                    recvd_counter++; 
+//                                    break;
+//                                 }
+//                                  
+//                            }
+//                          }
                     }
                     else if (received.equals("sent_all")) {
                         //end if got all pkts
