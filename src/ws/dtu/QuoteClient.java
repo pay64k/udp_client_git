@@ -16,7 +16,7 @@ public class QuoteClient extends Thread{
     //---------------------------------
              static Timer timer = new Timer(10000); 
              
-             public static int packet_size=2048; //change for packet size only here!!
+             public static int packet_size=1024; //change for packet size only here!!
              
              
     @Override
