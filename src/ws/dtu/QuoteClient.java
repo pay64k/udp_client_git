@@ -10,11 +10,13 @@ import org.omg.CORBA.portable.IDLEntity;
 
 public class QuoteClient extends Thread{
     //States---------------------------
-    public static enum State{IDLE,START, WFR1, WFR2, REC_STREAM};
+    public static enum State{IDLE,START, WFR1, WFR2, REC_STREAM,TEST};
         public static State currentState;
         public static State nextState=State.START;
     //---------------------------------
              static Timer timer = new Timer(10000); 
+             
+             public static int packet_size=2048; //change for packet size only here!!
              
              
     @Override
@@ -34,9 +36,9 @@ public class QuoteClient extends Thread{
         //start timer:
         timer.start();
         DatagramSocket socket = new DatagramSocket();
-        byte[] buf = new byte[256];
+        byte[] buf = new byte[packet_size];
         String data=null;
-        InetAddress address = InetAddress.getByName("192.168.1.50");////enter ip here 192.168.1.50  127.0.0.1 
+        InetAddress address = InetAddress.getByName("127.0.0.1");////enter ip here 192.168.1.50  127.0.0.1 
         DatagramPacket send_packet;
         DatagramPacket recv_packet;
         int pkt_amount=0;
@@ -65,7 +67,7 @@ public class QuoteClient extends Thread{
                 socket.send(send_packet);
                 //timer.reset();
                 nextState=State.WFR1;
-                buf = new byte[256];
+                buf = new byte[packet_size];
                 
         
                 
@@ -76,7 +78,7 @@ public class QuoteClient extends Thread{
                 
             case WFR1:
                 //System.out.println("In state WFR1");
-                buf = new byte[256];
+                buf = new byte[packet_size];
                 recv_packet = new DatagramPacket(buf, buf.length);
                 socket.setSoTimeout(pkt_timeout);//----------- timeout for a packet which is not arriving
                 try {
@@ -124,7 +126,7 @@ public class QuoteClient extends Thread{
                 //System.out.println("In state REC_STREAM");
                 missing_pkt_num.clear();
                 
-                    buf = new byte[256];
+                    buf = new byte[packet_size];
                     recv_packet = new DatagramPacket(buf, buf.length);
                     try {
                         socket.receive(recv_packet);
@@ -256,7 +258,7 @@ public class QuoteClient extends Thread{
                 
             case WFR2:
                 //System.out.println("In State WFR2");
-                    buf = new byte[256];
+                    buf = new byte[packet_size];
                     recv_packet = new DatagramPacket(buf, buf.length);
                     try {
                         socket.receive(recv_packet);
@@ -290,6 +292,10 @@ public class QuoteClient extends Thread{
                 //System.out.println("In state IDLE");
                 
                 timer.reset();
+                break;
+                
+            case TEST:
+                
                 break;
         }
        
