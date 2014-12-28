@@ -14,11 +14,11 @@ public class QuoteClient extends Thread{
         public static State currentState;
         public static State nextState=State.START;
     //---------------------------------
-             static Timer timer = new Timer(10000); 
+             static Timer timer = new Timer(40000); 
              
              public static int packet_size=256; 
              
-             public static int message_size = 1024; //change for packet size only here!!------------------!!             
+             public static int message_size = 512; //change for packet size only here!!------------------!!             
     @Override
              public void run(){
         try {
@@ -68,11 +68,6 @@ public class QuoteClient extends Thread{
                 //timer.reset();
                 nextState=State.WFR1;
                 buf = new byte[packet_size];
-                
-        
-                
-    
-
                 
                 break;
                 
@@ -145,16 +140,16 @@ public class QuoteClient extends Thread{
                // System.out.println("Recieved: " + received);
                     
                     if (received.startsWith("|")) {
-                   
+                        timer.reset();
                         int first = received.indexOf("|");
                         int second = received.indexOf("|", first+1);
-                        System.out.println(first + " " + second);
+                        //System.out.println(first + " " + second);
                         Integer seq = Integer.valueOf(received.substring(first+1, second));
-                        System.out.println(seq);
+                        //System.out.println(seq);
                         String dataString = received.substring(second+1,received.length());
                         
-                        System.out.println("REC.length: " + received.length());
-                        System.out.println("LENGTH: " + dataString.length());
+                       // System.out.println("REC.length: " + received.length());
+                        //System.out.println("LENGTH: " + dataString.length());
                                      
                         
                                 if (map.get(seq)==null) {
@@ -163,28 +158,7 @@ public class QuoteClient extends Thread{
                                     recvd_counter++; 
                                     }
                         
-//                        char[] array = received.toCharArray();
-//                        int distance=0;
-//                        //count distance between two '|' characters to find the length of the packet number
-//                        //first one is always '|'
-//                        for (int j = 1; j < array.length; j++) {
-//                            if (array[j] != '|') {
-//                                distance++;
-//                            }
-//                            else{ 
-//                                                               
-//                                Integer seq = Integer.valueOf(received.substring(1, distance+1));
-//                                String dataString = received.substring(distance+2,received.length());
-//                                                                
-//                                if (map.get(seq)==null) {
-//                                    map.put(seq, dataString);
-//                                    MyPanel.updatePackets(map);
-//                                    recvd_counter++; 
-//                                    break;
-//                                 }
-//                                  
-//                            }
-//                          }
+
                     }
                     else if (received.equals("sent_all")) {
                         //end if got all pkts
@@ -211,7 +185,7 @@ public class QuoteClient extends Thread{
                                 System.out.println("Written to file (C:/testJava/result.txt)...");
                                 
                             }
-                                
+                            timer.reset();
                             nextState=State.IDLE;
                         }
                         else{
@@ -280,9 +254,11 @@ public class QuoteClient extends Thread{
                     //System.out.println("Recieved: " + received);
                     if(received.equals("ACK")){
                         nextState=State.REC_STREAM;
+                        timer.reset();
                     }
                     else if (received.startsWith("|")) {
                     nextState=State.REC_STREAM;
+                    timer.reset();
                 }
                 break;
                 
