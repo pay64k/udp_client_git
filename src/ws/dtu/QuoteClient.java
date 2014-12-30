@@ -8,6 +8,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.omg.CORBA.portable.IDLEntity;
 
+//comment/uncomment System.out.prints to improve/degrade performance
+
 public class QuoteClient extends Thread{
     //States---------------------------
     public static enum State{IDLE,START, WFR1, WFR2, REC_STREAM,TEST};
@@ -38,7 +40,7 @@ public class QuoteClient extends Thread{
         DatagramSocket socket = new DatagramSocket();
         byte[] buf = new byte[packet_size];
         String data=null;
-        InetAddress address = InetAddress.getByName("127.0.0.1");////enter ip here 192.168.1.50  127.0.0.1 
+        InetAddress address = InetAddress.getByName("192.168.1.50");////enter ip here 192.168.1.50  127.0.0.1 
         DatagramPacket send_packet;
         DatagramPacket recv_packet;
         int pkt_amount=0;
@@ -63,7 +65,7 @@ public class QuoteClient extends Thread{
                 data="REQUEST:";
                 buf=data.getBytes();
                 send_packet = new DatagramPacket(buf, buf.length, address, 4445);
-                System.out.println("Sending: " + new String(send_packet.getData(), 0, send_packet.getLength() ));
+                //System.out.println("Sending: REQUEST:");
                 socket.send(send_packet);
                 //timer.reset();
                 nextState=State.WFR1;
@@ -82,8 +84,9 @@ public class QuoteClient extends Thread{
                     data="REQUEST:";
                     buf=data.getBytes();
                     send_packet = new DatagramPacket(buf, buf.length, address, 4445);
-                    //System.out.println("Sending: " + new String(send_packet.getData(), 0, send_packet.getLength() ));
+                    
                     socket.send(send_packet);
+                    //System.out.println("Sending: REQUEST");
                 }
                 
                 String received = new String(recv_packet.getData(), 0, recv_packet.getLength());
@@ -100,8 +103,8 @@ public class QuoteClient extends Thread{
                     data="ACK";
                     buf=data.getBytes();
                     send_packet = new DatagramPacket(buf, buf.length, address, 4445);
-                    //System.out.println("Sending: " + new String(send_packet.getData(), 0, send_packet.getLength() ));
                     socket.send(send_packet);
+                    //System.out.println("Sending: ACK");
                     
                     nextState=State.REC_STREAM; 
                     for (int i = 0; i < pkt_amount; i++) {
@@ -132,12 +135,12 @@ public class QuoteClient extends Thread{
                     data="is_all_sent?";
                     buf=data.getBytes();
                     send_packet = new DatagramPacket(buf, buf.length, address, 4445);
-                    //System.out.println("Sending: " + new String(send_packet.getData(), 0, send_packet.getLength() ));
                     socket.send(send_packet);
+                    //System.out.println("Sending: is_all_sent?");
                     }  
                     
                 received = new String(recv_packet.getData(), 0, recv_packet.getLength());
-               // System.out.println("Recieved: " + received);
+                //System.out.println("Recieved: message");
                     
                     if (received.startsWith("|")) {
                         timer.reset();
@@ -148,7 +151,9 @@ public class QuoteClient extends Thread{
                         //System.out.println(seq);
                         String dataString = received.substring(second+1,received.length());
                         
-                       // System.out.println("REC.length: " + received.length());
+                        //System.out.println("Received message nr: " + seq);
+                        
+                        //System.out.println("REC.length: " + received.length());
                         //System.out.println("LENGTH: " + dataString.length());
                                      
                         
@@ -167,12 +172,9 @@ public class QuoteClient extends Thread{
                                 data="got_all_pkts";
                                 buf=data.getBytes();
                                 send_packet = new DatagramPacket(buf, buf.length, address, 4445);
-                                System.out.println("Sending: " + new String(send_packet.getData(), 0, send_packet.getLength() ));
                                 socket.send(send_packet);
-                                //System.out.println("Recieved text:");
-//                                for(Map.Entry<Integer,String> entry : map.entrySet()) {
-//                              System.out.println(entry.getKey() + " => " + entry.getValue());
-//                                } 
+                                //System.out.println("Sending: got_all_pkts");
+
                                 Frame.elapsed_time=System.currentTimeMillis();
                                 long exec_time = Frame.elapsed_time - Frame.time;
                                 System.out.println("Execution time: " + exec_time + " ms");
@@ -190,15 +192,15 @@ public class QuoteClient extends Thread{
                         }
                         else{
                             //fill in "null" for packet numbers that are missing
-                            for (int i = 0; i < pkt_amount; i++) {
-                                if (map.containsKey(i)) {
-                                    //System.out.println("Got index: "+ i);
-                                }
-                                else{
-                                    //System.out.println("Missing: "+i);
-                                    map.put(i, null);
-                                }
-                            }
+//                            for (int i = 0; i < pkt_amount; i++) {
+//                                if (map.containsKey(i)) {
+//                                    //System.out.println("Got index: "+ i);
+//                                }
+//                                else{
+//                                    //System.out.println("Missing: "+i);
+//                                    map.put(i, null);
+//                                }
+//                            }
                             //find missing pkts:
                             for(Map.Entry<Integer,String> entry : map.entrySet()) {
                               //System.out.println(entry.getKey() + " => " + entry.getValue());
@@ -214,14 +216,15 @@ public class QuoteClient extends Thread{
                                 data=missing_pkt_num.get(i).toString();
                                 buf=data.getBytes();
                                 send_packet = new DatagramPacket(buf, buf.length, address, 4445);
-                                //System.out.println("Sending missing: " + new String(send_packet.getData(), 0, send_packet.getLength() ));
+                                //System.out.println("Sending missing: " + data);
                                 socket.send(send_packet);
+                                
                             }
                                 data="END";
                                 buf=data.getBytes();
                                 send_packet = new DatagramPacket(buf, buf.length, address, 4445);
-                                //System.out.println("Sending missing: " + new String(send_packet.getData(), 0, send_packet.getLength() ));
                                 socket.send(send_packet);
+                                //System.out.println("Sending: END");
                                 
                             nextState=State.WFR2;
                         }
@@ -236,7 +239,7 @@ public class QuoteClient extends Thread{
                         socket.receive(recv_packet);
                         timer.reset();
                     } catch (Exception e) {
-                        //resend missing_pkts_numbers according to CLIENT FSM v3.2
+                        //resend missing_pkts_numbers
                         for (int i = 0; i < missing_pkt_num.size(); i++) {
                         data=missing_pkt_num.get(i).toString();
                         buf=data.getBytes();
@@ -247,8 +250,8 @@ public class QuoteClient extends Thread{
                         data="END";
                         buf=data.getBytes();
                         send_packet = new DatagramPacket(buf, buf.length, address, 4445);
-                        //System.out.println("Sending missing: " + new String(send_packet.getData(), 0, send_packet.getLength() ));
                         socket.send(send_packet);
+                        //System.out.println("Sending: END");
                     }
                     received = new String(recv_packet.getData(), 0, recv_packet.getLength());
                     //System.out.println("Recieved: " + received);
